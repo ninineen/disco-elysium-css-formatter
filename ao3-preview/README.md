@@ -4,18 +4,23 @@ Local preview for formatted chapters. Renders them inside the real AO3 styleshee
 
 ---
 
-## Setup
+## Setup & running
 
-1. Open VS Code **from inside WSL** — in your Ubuntu terminal:
-   ```bash
-   cd /home/neen/code-vtubing/uc41-html-formatted-chapters
-   code .
-   ```
-2. Install the **Live Server** extension if you don't have it (`ritwickdey.liveserver`).
-3. In the VS Code file explorer, right-click `ao3-preview/preview.html` → **Open with Live Server**.
-4. The preview opens in your browser at `http://127.0.0.1:5500/ao3-preview/preview.html`.
+From the project root in WSL:
 
-> **Why open VS Code from WSL?** Live Server is finicky with `\\wsl.localhost\...` UNC paths. Opening via `code .` in the WSL terminal makes it treat the project as a native Linux path — no issues.
+```bash
+npm start
+```
+
+This builds the project into `build/` (compiles TypeScript, copies HTML/CSS) then starts a local server. The preview opens automatically at `http://127.0.0.1:8080/build/preview.html`.
+
+To rebuild without starting the server:
+
+```bash
+npm run build
+```
+
+> **Run from WSL, not Windows.** `live-server` is installed in the WSL environment. Open your terminal in Ubuntu and `cd` to the project root before running npm commands.
 
 ---
 
@@ -29,16 +34,16 @@ Local preview for formatted chapters. Renders them inside the real AO3 styleshee
 
 ## Adding chapters to the dropdown
 
-Edit the `CHAPTERS` array near the top of the `<script>` block in `preview.html`:
+Edit the `CHAPTERS` array in `ao3-preview/ts/preview.ts`:
 
-```js
-const CHAPTERS = [
+```ts
+const CHAPTERS: Chapter[] = [
   { label: "ch7 (formatted)", path: "../chapters/ch7.formatted.html" },
   { label: "ch8 (formatted)", path: "../chapters/ch8.formatted.html" },
 ];
 ```
 
-Paths are relative to `preview.html`.
+Paths are relative to the served `build/preview.html`, so `../chapters/` points to the project root's `chapters/` folder. Run `npm run build` (or `npm start`) to pick up the change.
 
 ---
 
@@ -62,4 +67,4 @@ From the project root:
 npx ts-node format.ts chapters/chN.html
 ```
 
-Outputs `chapters/chN.formatted.html`. Live Server will pick up the new file immediately.
+Outputs `chapters/chN.formatted.html`. Add it to the `CHAPTERS` array in `ts/preview.ts` and run `npm run build` to make it appear in the dropdown.

@@ -5,7 +5,7 @@
     "module": "ES2022",
     "moduleResolution": "bundler",
     "rootDir": "ts",
-    "outDir": "js",
+    "outDir": "../build/js",
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitReturns": true,
