@@ -43,7 +43,7 @@ const SKILL_CLASS: Record<string, string> = {
  * class, or null if the label is not a recognised skill name.
  * Sub-skills like "PERCEPTION (HEARING)" map to "perception".
  */
-function skillClass(label: string): string | null {
+export function skillClass(label: string): string | null {
   // Strip parenthetical suffix: "PERCEPTION (HEARING)" → "PERCEPTION"
   const base = label.replace(/\s*\(.*\)$/, "").trim();
   const cls = SKILL_CLASS[base];
@@ -55,7 +55,7 @@ function skillClass(label: string): string | null {
  * Determine success/failure class from the bracket content.
  * Returns "success" | "failure" | null (for [—] or unrecognised).
  */
-function checkClass(bracketInner: string): "success" | "failure" | null {
+export function checkClass(bracketInner: string): "success" | "failure" | null {
   // bracketInner is the text between [ and ] (trimmed), e.g.
   // "Trivial: Success", "Formidable: Failure — <em>trying</em>", "—"
   if (bracketInner === "—") return null;
@@ -81,7 +81,7 @@ function checkClass(bracketInner: string): "success" | "failure" | null {
  *   <p class="de-convo"><span class="de-skill cls">SKILL NAME</span>
  *   <span class="de-check success|failure">[bracket]</span> mood — body</p>
  */
-function transformLine(line: string): string {
+export function transformLine(line: string): string {
   // Must start with <p> and contain a <strong>…</strong> skill label
   const skillMatch = line.match(
     /^<p>(<strong>(.+?)<\/strong>)([\s\S]*)(<\/p>)$/
@@ -194,4 +194,4 @@ function main() {
   process.stdout.write(`Written: ${outputPath}\n`);
 }
 
-main();
+if (require.main === module) main();

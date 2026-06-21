@@ -1,0 +1,27 @@
+{
+  "name": "uc41-html-formatted-chapters",
+  "version": "1.0.0",
+  "description": "HTML-formatted chapters of *Unprofessional Conduct in the 41st*, my Disco Elysium fanfic on AO3. Marked up for the `ao3-adaptive-disco-elysium-workskin` skill check styling — readable across light mode, Ao3Reversi theme, desktop, and mobile.",
+  "main": "index.js",
+  "scripts": {
+    "format": "ts-node format.ts",
+    "start": "live-server . --entry-file=ao3-preview/preview.html --open=/ --watch=chapters,ao3-preview --no-browser",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-vtubing:ninineen/uc41-html-formatted-chapters.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.0.0",
+    "jest": "^30.4.2",
+    "live-server": "^1.2.2",
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
+  }
+}
