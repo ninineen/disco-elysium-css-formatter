@@ -42,6 +42,18 @@ Paths are relative to `preview.html`.
 
 ---
 
+## Manual markup — skill colour without a label
+
+For moments where a skill bleeds onto the page as raw text (breaking the established formatting intentionally), wrap the content in a bare `de-skill` span — no `de-convo`, no label, no bracket:
+
+```html
+<p><span class="de-skill electrochemistry"><strong><em>Him.</em> <em>Take him.</em> <em>He is the substance.</em></strong></span></p>
+```
+
+This gives the text the skill's colour only. Works with any skill class. Any inline formatting (`<strong>`, `<em>`, etc.) goes inside the span.
+
+---
+
 ## Generating a formatted chapter
 
 From the project root:

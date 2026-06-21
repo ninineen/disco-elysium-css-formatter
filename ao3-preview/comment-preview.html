@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AO3 Comment Preview</title>
+
+  <!-- same AO3 base styles as chapter preview -->
+  <link rel="stylesheet" href="1_site_screen_.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background: #fff;
+      color: #2a2a2a;
+      font: 100%/1.125 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* toolbar */
+    #toolbar {
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #1a1a1a;
+      color: #eee;
+      padding: 0.5em 1em;
+      display: flex;
+      align-items: center;
+      gap: 1em;
+      font: 0.8em/1 monospace;
+    }
+
+    #toolbar a { color: #aaa; text-decoration: none; }
+    #toolbar a:hover { color: #fff; }
+    #toolbar .sep { color: #555; }
+
+    #dark-toggle {
+      margin-left: auto;
+      font: inherit;
+      background: #990000;
+      color: #fff;
+      border: none;
+      padding: 0.25em 0.75em;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    #dark-toggle:hover { background: #cc0000; }
+
+    #sanitized-badge {
+      background: #5a3a00;
+      color: #f5c842;
+      font-size: 0.85em;
+      padding: 0.15em 0.5em;
+      border-radius: 3px;
+      display: none;
+    }
+
+    /* two-pane layout */
+    #panes {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 0;
+    }
+
+    /* input pane */
+    #input-pane {
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #333;
+    }
+
+    #input-label {
+      flex-shrink: 0;
+      background: #1a1a1a;
+      color: #888;
+      font: 0.7em/1 monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #clear-btn {
+      background: none;
+      border: 1px solid #444;
+      border-radius: 3px;
+      color: #888;
+      font: inherit;
+      padding: 1px 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    #clear-btn:hover { color: #eee; border-color: #666; }
+
+    #html-input {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      background: #111;
+      color: #d4d4d4;
+      font: 13px/1.6 'Courier New', Courier, monospace;
+      padding: 12px;
+      tab-size: 2;
+    }
+    #html-input::placeholder { color: #555; }
+
+    #warning-bar {
+      flex-shrink: 0;
+      min-height: 22px;
+      padding: 3px 10px;
+      background: #1a1a1a;
+      font: 0.7em/1 monospace;
+      color: #e8a020;
+      display: none;
+    }
+
+    /* preview pane */
+    #preview-pane {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #preview-label {
+      flex-shrink: 0;
+      background: #f5f0e8;
+      border-bottom: 1px solid #d9cfc0;
+      color: #7a6a55;
+      font: 0.7em/1 monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 5px 10px;
+    }
+
+    #preview-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5em 2em;
+    }
+
+    /* fake AO3 comment chrome */
+    #fake-comment {
+      border: 1px solid #ddd;
+      position: relative;
+      overflow: visible;
+      text-align: start;
+      max-width: 52em;
+    }
+
+    #fake-comment h4.byline {
+      background: #ddd;
+      padding: 0.25em 0.25em 0.25em 0.5em;
+      margin: 0;
+      font-size: 0.875em;
+    }
+
+    #fake-comment h4.byline .role { font-weight: bold; }
+
+    /* mirrors .comment .userstuff from 1_site_screen_.css */
+    #comment-content {
+      margin: 1em;
+      min-height: 3.3em;
+      font-size: 0.875em;
+    }
+
+    #fake-comment .actions {
+      text-align: right;
+      padding: 0.25em 0.643em;
+      font-size: 0.75em;
+    }
+
+    #fake-comment .actions a {
+      color: #2a547c;
+      text-decoration: underline;
+      margin-left: 0.5em;
+    }
+
+    /* dark mode */
+    body.dark { background: #1a1a1a; color: #d4d4d4; }
+    body.dark #preview-pane { background: #1a1a1a; }
+    body.dark #preview-label { background: #222; border-color: #333; color: #888; }
+    body.dark #fake-comment { border-color: #444; }
+    body.dark #fake-comment h4.byline { background: #333; color: #d4d4d4; }
+    body.dark #comment-content { color: #d4d4d4; }
+    body.dark #fake-comment .actions a { color: #7aaddb; }
+
+    @media (max-width: 700px) {
+      #panes { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+      #input-pane { border-right: none; border-bottom: 2px solid #333; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toolbar">
+  <a href="preview.html">&larr; chapter preview</a>
+  <span class="sep">|</span>
+  <span style="color:#eee;">comment preview</span>
+  <span id="sanitized-badge">sanitized</span>
+  <button id="dark-toggle">&#9790; Dark</button>
+</div>
+
+<div id="panes">
+
+  <div id="input-pane">
+    <div id="input-label">
+      <span>HTML input</span>
+      <button id="clear-btn">Clear</button>
+    </div>
+    <textarea
+      id="html-input"
+      spellcheck="false"
+      placeholder="Type your comment HTML here...
+
+Allowed: a, b, em, strong, i, u, s, blockquote, h1-h6, ul, ol, li, p, br, hr, img, table, span, div, code, pre, sup, sub, details, summary, ruby, and more.
+
+Disallowed tags and inline style= are stripped automatically."
+    ></textarea>
+    <div id="warning-bar"></div>
+  </div>
+
+  <div id="preview-pane">
+    <div id="preview-label">AO3 preview</div>
+    <div id="preview-scroll">
+      <div id="fake-comment" class="comment">
+        <h4 class="byline">
+          ninineen
+          <span class="role">(Author)</span>
+        </h4>
+        <div id="comment-content" class="userstuff"></div>
+        <div class="actions">
+          <a href="#">Reply</a>
+          <a href="#">Edit</a>
+          <a href="#">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script>
+  var ALLOWED_TAGS = [
+    "a","abbr","acronym","address","b","big","blockquote","br",
+    "caption","center","cite","code","col","colgroup","dd","del",
+    "details","dfn","div","dl","dt","em","figcaption","figure",
+    "h1","h2","h3","h4","h5","h6","hr","i","img","ins","kbd",
+    "li","ol","p","pre","q","ruby","rt","rp","s","samp","small",
+    "span","strike","strong","sub","summary","sup","table","tbody",
+    "td","tfoot","th","thead","tr","tt","u","ul","var"
+  ];
+
+  var ALLOWED_ATTR = [
+    "align","alt","axis","class","dir","height","href","name",
+    "src","title","width"
+  ];
+
+  var htmlInput      = document.getElementById("html-input");
+  var commentContent = document.getElementById("comment-content");
+  var clearBtn       = document.getElementById("clear-btn");
+  var warningBar     = document.getElementById("warning-bar");
+  var sanitizedBadge = document.getElementById("sanitized-badge");
+  var darkToggle     = document.getElementById("dark-toggle");
+
+  function update() {
+    var raw = htmlInput.value;
+    var removedTags  = {};
+    var removedAttrs = {};
+
+    DOMPurify.addHook("uponSanitizeElement", function(node, data) {
+      var tag = data.tagName.toLowerCase();
+      if (tag !== "#text" && tag !== "#document" && ALLOWED_TAGS.indexOf(tag) === -1) {
+        removedTags[tag] = true;
+      }
+    });
+
+    DOMPurify.addHook("uponSanitizeAttribute", function(_node, data) {
+      var attr = data.attrName.toLowerCase();
+      if (ALLOWED_ATTR.indexOf(attr) === -1) {
+        removedAttrs[attr] = true;
+      }
+    });
+
+    var clean = DOMPurify.sanitize(raw, {
+      ALLOWED_TAGS: ALLOWED_TAGS,
+      ALLOWED_ATTR: ALLOWED_ATTR,
+      KEEP_CONTENT: true
+    });
+
+    DOMPurify.removeAllHooks();
+
+    commentContent.innerHTML = clean;
+
+    var tagList  = Object.keys(removedTags);
+    var attrList = Object.keys(removedAttrs);
+    var parts    = [];
+    if (tagList.length)  parts.push("tags: "  + tagList.map(function(t){ return "<" + t + ">"; }).join(", "));
+    if (attrList.length) parts.push("attrs: " + attrList.join(", "));
+
+    if (parts.length) {
+      warningBar.textContent   = "Stripped: " + parts.join(" | ");
+      warningBar.style.display = "block";
+      sanitizedBadge.style.display = "inline";
+    } else {
+      warningBar.style.display        = "none";
+      sanitizedBadge.style.display    = "none";
+    }
+  }
+
+  htmlInput.addEventListener("input", update);
+
+  clearBtn.addEventListener("click", function() {
+    htmlInput.value = "";
+    update();
+    htmlInput.focus();
+  });
+
+  var dark = false;
+  darkToggle.addEventListener("click", function() {
+    dark = !dark;
+    document.body.classList.toggle("dark", dark);
+    darkToggle.textContent = dark ? "☀ Light" : "☾ Dark";
+  });
+
+  update();
+</script>
+
+</body>
+</html>
