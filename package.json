@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "format": "ts-node format.ts",
-    "start": "live-server . --entry-file=ao3-preview/preview.html --open=/ --watch=chapters,ao3-preview --no-browser",
-    "test": "jest"
+    "start": "live-server . --open=/ao3-preview/preview.html --watch=chapters,ao3-preview",
+    "test": "jest",
+    "preview:build": "tsc --project ao3-preview/tsconfig.json",
+    "preview:watch": "tsc --project ao3-preview/tsconfig.json --watch"
   },
   "repository": {
     "type": "git",
