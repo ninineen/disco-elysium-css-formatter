@@ -6,7 +6,7 @@ interface Chapter {
 }
 
 const CHAPTERS: Chapter[] = [
-  { label: "ch7 (formatted)", path: "../chapters/ch7.formatted.html" },
+  { label: "ch7 (formatted)", path: "chapters/ch7.formatted.html" },
 ];
 
 // ── DOM refs ───────────────────────────────────────────
