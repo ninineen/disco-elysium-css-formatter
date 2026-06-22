@@ -17,12 +17,33 @@ const ALLOWED_ATTR: string[] = [
 
 // ── DOM refs ───────────────────────────────────────────
 
-const htmlInput      = document.getElementById("html-input")      as HTMLTextAreaElement;
 const commentContent = document.getElementById("comment-content") as HTMLElement;
+const sourceInput    = document.getElementById("source-input")    as HTMLTextAreaElement;
 const clearBtn       = document.getElementById("clear-btn")       as HTMLButtonElement;
+const copyHtmlBtn    = document.getElementById("copy-html-btn")   as HTMLButtonElement;
 const warningBar     = document.getElementById("warning-bar")     as HTMLElement;
 const sanitizedBadge = document.getElementById("sanitized-badge") as HTMLElement;
 const darkToggle     = document.getElementById("dark-toggle")     as HTMLButtonElement;
+const previewScroll  = document.getElementById("preview-scroll")  as HTMLElement;
+const tabs           = document.querySelectorAll<HTMLButtonElement>(".preview-tab");
+
+// ── Quill ──────────────────────────────────────────────
+
+const quill = new Quill("#quill-editor", {
+  theme: "snow",
+  placeholder: "Write your comment here…",
+  modules: {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ script: "sub" }, { script: "super" }],
+      ["blockquote", "code-block"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
+  },
+});
 
 // ── sanitizer ──────────────────────────────────────────
 
@@ -66,25 +87,84 @@ function buildWarningText(removedTags: Set<string>, removedAttrs: Set<string>): 
   return parts.join(" | ");
 }
 
-function updatePreview(): void {
-  const { clean, removedTags, removedAttrs } = sanitizeAndCollectStripped(htmlInput.value);
-
-  commentContent.innerHTML = clean;
-
+function applyWarnings(removedTags: Set<string>, removedAttrs: Set<string>): void {
   const warningText = buildWarningText(removedTags, removedAttrs);
   const hasWarnings = warningText.length > 0;
-
   warningBar.textContent       = hasWarnings ? `Stripped: ${warningText}` : "";
   warningBar.style.display     = hasWarnings ? "block" : "none";
   sanitizedBadge.style.display = hasWarnings ? "inline" : "none";
 }
 
-htmlInput.addEventListener("input", updatePreview);
+// ── sync logic ─────────────────────────────────────────
+
+let updating = false;
+
+function getEditorHtml(): string {
+  const inner = quill.root.innerHTML;
+  return inner === "<p><br></p>" ? "" : inner;
+}
+
+function updateFromEditor(): void {
+  if (updating) return;
+  updating = true;
+  const { clean, removedTags, removedAttrs } = sanitizeAndCollectStripped(getEditorHtml());
+  commentContent.innerHTML = clean;
+  sourceInput.value = clean;
+  applyWarnings(removedTags, removedAttrs);
+  updating = false;
+}
+
+function updateFromSource(): void {
+  if (updating) return;
+  updating = true;
+  const raw = sourceInput.value;
+  const { clean, removedTags, removedAttrs } = sanitizeAndCollectStripped(raw);
+  commentContent.innerHTML = clean;
+  const delta = quill.clipboard.convert({ html: raw });
+  quill.setContents(delta, "silent");
+  applyWarnings(removedTags, removedAttrs);
+  updating = false;
+}
+
+quill.on("text-change", (_delta, _old, source) => {
+  if (source === "silent") return;
+  updateFromEditor();
+});
+
+sourceInput.addEventListener("input", updateFromSource);
+
+// ── tab switching ──────────────────────────────────────
+
+tabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    tabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    if (tab.dataset["tab"] === "source") {
+      previewScroll.style.display = "none";
+      sourceInput.style.display   = "block";
+      sourceInput.focus();
+    } else {
+      previewScroll.style.display = "";
+      sourceInput.style.display   = "none";
+    }
+  });
+});
+
+// ── clear ──────────────────────────────────────────────
+
+copyHtmlBtn.addEventListener("click", async () => {
+  const { clean } = sanitizeAndCollectStripped(getEditorHtml());
+  await navigator.clipboard.writeText(clean);
+  const orig = copyHtmlBtn.textContent;
+  copyHtmlBtn.textContent = "Copied!";
+  setTimeout(() => { copyHtmlBtn.textContent = orig; }, 1500);
+});
 
 clearBtn.addEventListener("click", () => {
-  htmlInput.value = "";
-  updatePreview();
-  htmlInput.focus();
+  quill.setText("");
+  sourceInput.value = "";
+  commentContent.innerHTML = "";
+  quill.focus();
 });
 
 // ── dark mode ──────────────────────────────────────────
@@ -103,4 +183,4 @@ darkToggle.addEventListener("click", () => {
   applyDarkMode(isDark);
 });
 
-updatePreview();
+updateFromEditor();

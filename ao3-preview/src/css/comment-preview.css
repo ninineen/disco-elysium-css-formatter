@@ -47,6 +47,11 @@ body {
   border-inline-end: 2px solid var(--color-pane-divider);
 }
 
+.pane-label-actions {
+  display: flex;
+  gap: 4px;
+}
+
 #input-label {
   flex-shrink: 0;
   background: var(--color-pane-label-bg);
@@ -184,6 +189,122 @@ body {
   border-radius: 3px;
   display: none;
 }
+
+/* ── preview pane tabs ───────────────────────────────── */
+
+#preview-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#preview-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.preview-tab {
+  background: none;
+  border: none;
+  border-radius: 3px 3px 0 0;
+  color: var(--color-preview-label-text);
+  font: 0.7em/1 var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.preview-tab:hover { color: light-dark(#333, #ccc); }
+
+.preview-tab.active {
+  color: light-dark(#2a2a2a, #e8e8e8);
+  background: light-dark(rgba(0,0,0,0.06), rgba(255,255,255,0.06));
+}
+
+/* source textarea (hidden by default, shown when Source tab active) */
+
+#source-input {
+  display: none;
+  flex: 1;
+  resize: none;
+  border: none;
+  outline: none;
+  background: var(--color-input-bg);
+  color: var(--color-input-text);
+  font: 13px/1.6 var(--font-mono);
+  padding: 12px;
+  tab-size: 2;
+  field-sizing: fixed;
+}
+
+#source-input::placeholder { color: var(--color-input-placeholder); }
+
+/* ── Quill editor ────────────────────────────────────── */
+
+#input-pane {
+  /* quill-editor needs flex column to fill height */
+  & #quill-editor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+}
+
+.ql-toolbar.ql-snow {
+  flex-shrink: 0;
+  background: #1c1c1c;
+  border: none !important;
+  border-block-end: 1px solid var(--color-pane-divider) !important;
+  padding: 5px 8px;
+  flex-wrap: wrap;
+}
+
+.ql-container.ql-snow {
+  flex: 1;
+  border: none !important;
+  min-block-size: 0;
+  overflow-y: auto;
+  background: var(--color-input-bg);
+  color: var(--color-input-text);
+  font-size: 13px;
+}
+
+.ql-editor {
+  min-block-size: 100%;
+  line-height: 1.6;
+  color: var(--color-input-text);
+}
+
+.ql-editor.ql-blank::before {
+  color: var(--color-input-placeholder);
+  font-style: normal;
+}
+
+/* toolbar icon colours */
+.ql-snow .ql-stroke { stroke: #888; }
+.ql-snow .ql-fill   { fill: #888; }
+.ql-snow .ql-picker  { color: #888; }
+
+.ql-snow button:hover .ql-stroke,
+.ql-snow button.ql-active .ql-stroke,
+.ql-snow .ql-picker-label:hover .ql-stroke { stroke: #ccc; }
+
+.ql-snow button:hover .ql-fill,
+.ql-snow button.ql-active .ql-fill { fill: #ccc; }
+
+.ql-snow .ql-picker-label:hover,
+.ql-snow .ql-picker-label.ql-active { color: #ccc; }
+
+.ql-snow .ql-picker-options {
+  background: #2a2a2a;
+  border-color: #444 !important;
+  color: #ccc;
+}
+
+.ql-snow .ql-picker-item:hover { color: #fff; }
 
 /* ── responsive ──────────────────────────────────────── */
 
