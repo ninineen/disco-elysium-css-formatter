@@ -1,3 +1,4 @@
+import { stripTrailingBrs, containsEncodedHtmlTags, decodeTagEntities } from "./comment-preview-utils.js";
 const DARK_MODE_KEY = "ao3preview-dark";
 const ALLOWED_TAGS = [
     "a", "abbr", "acronym", "address", "b", "big", "blockquote", "br",
@@ -37,15 +38,6 @@ const quill = new Quill("#quill-editor", {
             ["clean"],
         ],
     },
-});
-// When Quill pastes a plain text node that looks like raw HTML,
-// convert it to rendered HTML instead of inserting it as literal text.
-quill.clipboard.addMatcher(Node.TEXT_NODE, (node, delta) => {
-    const text = node.data;
-    if (/<[a-z][\s\S]*>/i.test(text)) {
-        return quill.clipboard.convert({ html: text });
-    }
-    return delta;
 });
 function sanitizeAndCollectStripped(raw) {
     const removedTags = new Set();
@@ -90,8 +82,7 @@ function getEditorHtml() {
     const inner = quill.root.innerHTML;
     if (inner === "<p><br></p>")
         return "";
-    // Quill appends a trailing <br> inside every block element — strip them.
-    return inner.replace(/<br\s*\/?>\s*(<\/(?:p|li|h[1-6]|blockquote|td|th)>)/gi, "$1");
+    return stripTrailingBrs(inner);
 }
 function updateFromEditor() {
     if (updating)
@@ -118,6 +109,15 @@ function updateFromSource() {
 quill.on("text-change", (_delta, _old, source) => {
     if (source === "silent")
         return;
+    // If Quill entity-encoded the pasted text instead of rendering it as HTML,
+    // decode it and re-set the contents as actual HTML.
+    const inner = quill.root.innerHTML;
+    if (source === "user" && containsEncodedHtmlTags(inner)) {
+        const decoded = decodeTagEntities(inner);
+        const delta = quill.clipboard.convert({ html: decoded });
+        quill.setContents(delta, "silent");
+        return;
+    }
     updateFromEditor();
 });
 sourceInput.addEventListener("input", updateFromSource);
@@ -164,4 +164,3 @@ darkToggle.addEventListener("click", () => {
     applyDarkMode(isDark);
 });
 updateFromEditor();
-export {};
