@@ -45,21 +45,14 @@ const quill = new Quill("#quill-editor", {
   },
 });
 
-// If the user pastes raw HTML text (e.g. "<b>hello</b>"), detect it and
-// insert it as rendered HTML rather than a literal string.
-quill.root.addEventListener("paste", (e: ClipboardEvent) => {
-  const text = e.clipboardData?.getData("text/plain") ?? "";
-  const hasHtmlMime = e.clipboardData?.types.includes("text/html") ?? false;
-  const looksLikeHtml = /<[a-z][\s\S]*>/i.test(text);
-
-  if (!hasHtmlMime && looksLikeHtml) {
-    e.preventDefault();
-    e.stopPropagation();
-    const range = quill.getSelection(true);
-    const delta = quill.clipboard.convert({ html: text });
-    quill.updateContents(delta, "user");
-    quill.setSelection(range.index + delta.ops.length, 0, "silent");
+// When Quill pastes a plain text node that looks like raw HTML,
+// convert it to rendered HTML instead of inserting it as literal text.
+quill.clipboard.addMatcher(Node.TEXT_NODE, (node, delta) => {
+  const text = (node as Text).data;
+  if (/<[a-z][\s\S]*>/i.test(text)) {
+    return quill.clipboard.convert({ html: text });
   }
+  return delta;
 });
 
 // ── sanitizer ──────────────────────────────────────────
@@ -118,7 +111,9 @@ let updating = false;
 
 function getEditorHtml(): string {
   const inner = quill.root.innerHTML;
-  return inner === "<p><br></p>" ? "" : inner;
+  if (inner === "<p><br></p>") return "";
+  // Quill appends a trailing <br> inside every block element — strip them.
+  return inner.replace(/<br\s*\/?>\s*(<\/(?:p|li|h[1-6]|blockquote|td|th)>)/gi, "$1");
 }
 
 function updateFromEditor(): void {
