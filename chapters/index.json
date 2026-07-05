@@ -1,10 +1,18 @@
 [
   {
+    "label": "azh (formatted)",
+    "path": "chapters/azh.formatted.html"
+  },
+  {
     "label": "ch 2 (formatted)",
     "path": "chapters/ch2.formatted.html"
   },
   {
     "label": "ch 7 (formatted)",
     "path": "chapters/ch7.formatted.html"
+  },
+  {
+    "label": "custody (formatted)",
+    "path": "chapters/custody.formatted.html"
   }
 ]
