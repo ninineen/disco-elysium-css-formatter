@@ -10,6 +10,7 @@
     previewLabel: "How it renders",
     privacyNote: "Runs entirely in your browser nothing is uploaded",
     validationNote: "Make sure your HTML is well-formed first (every tag closed)",
+    desktopNote: "Works best on desktop",
   },
   toolbar: {
     startOver: "← Start over",
