@@ -11,6 +11,7 @@
     privacyNote: "Runs entirely in your browser nothing is uploaded",
     validationNote: "Make sure your HTML is well-formed first (every tag closed)",
     desktopNote: "Works best on desktop",
+    saveWorkNote: "Refreshing or navigating away loses your work! Save your HTML elsewhere often",
   },
   toolbar: {
     startOver: "← Start over",

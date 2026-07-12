@@ -1,4 +1,4 @@
-﻿import { CheckIcon, DesktopIcon, LockIcon } from "../../components/icons";
+﻿import { CheckIcon, DesktopIcon, LockIcon, WarningIcon } from "../../components/icons";
 import UploadBox from "../../components/UploadBox";
 import { EXAMPLE_INPUT, EXAMPLE_OUTPUT } from "../../core/guideExample";
 import { highlightHtml } from "../../core/highlightHtml";
@@ -64,6 +64,7 @@ export default function FormatterLanding({
             <span className="home-badge"><LockIcon />{copy.privacyNote}</span>
             <span className="home-badge"><CheckIcon />{copy.validationNote}</span>
             <span className="home-badge"><DesktopIcon />{copy.desktopNote}</span>
+            <span className="home-badge home-badge-warning"><WarningIcon />{copy.saveWorkNote}</span>
           </div>
         </section>
       </div>

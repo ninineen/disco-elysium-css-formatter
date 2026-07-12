@@ -313,6 +313,15 @@ body {
   color: var(--text-dim);
 }
 
+.home-badge-warning {
+  border-color: #c9862c;
+  color: #c9862c;
+}
+
+.home-badge-warning .badge-icon {
+  color: #c9862c;
+}
+
 .upload-box {
   width: min(480px, 100%);
   border: 2px dashed var(--border);

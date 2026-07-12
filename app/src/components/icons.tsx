@@ -28,6 +28,22 @@ export function CheckIcon() {
   );
 }
 
+export function WarningIcon() {
+  return (
+    <svg
+      className="badge-icon"
+      viewBox="0 0 16 16"
+      width="14"
+      height="14"
+      aria-hidden="true"
+    >
+      <path d="M8 2 14.5 13.5H1.5L8 2Z" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+      <path d="M8 6.5v3.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <circle cx="8" cy="11.7" r="0.75" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function DesktopIcon() {
   return (
     <svg
