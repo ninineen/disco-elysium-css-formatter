@@ -1,8 +1,14 @@
-# Unprofessional Conduct in the 41st — HTML-Formatted Chapters
+﻿# Disco Elysium CSS Formatter
 
-HTML-formatted chapters of *Unprofessional Conduct in the 41st*, my Disco Elysium fanfic on AO3. Marked up for the `ao3-adaptive-disco-elysium-workskin` skill check styling — readable across light mode, Ao3Reversi theme, desktop, and mobile.
+A browser tool (+ CLI) that marks up Disco Elysium–style skill checks with the `ao3-adaptive-disco-elysium-workskin` CSS classes, for AO3 fic authors. Drop in a chapter's HTML, skill checks get auto-colored, copy the result back out. All client-side, nothing is ever uploaded anywhere.
 
-This repo is for version control of my own chapters. Not a template, not free to reuse.
+## Use it online
+
+### [Launch the Disco Elysium CSS Formatter](https://ninineen.github.io/disco-elysium-css-formatter/)
+
+No installation needed. It runs entirely in your browser, and your chapter text is never uploaded.
+
+This repo also holds the HTML-formatted chapters of *Unprofessional Conduct in the 41st*, my own Disco Elysium fanfic on AO3, which is what this tool was originally built to format. The chapter text itself is not a template and isn't free to reuse. See [License](#license).
 
 ---
 
@@ -22,9 +28,52 @@ I make AO3 skins, stream on Twitch, and post fandom content across socials. Find
 
 ---
 
+## Usage
+
+> **Run all commands from WSL**, not Windows. `ts-node` and the app's dependencies are installed in the WSL environment: Open a terminal in Ubuntu and `cd` to the project root before running anything.
+
+### Run the web app
+
+**[Use it online](https://ninineen.github.io/disco-elysium-css-formatter/)**: no install needed, runs entirely in your browser, nothing is ever uploaded anywhere.
+
+Or run it locally:
+
+```bash
+npm run dev
+# http://localhost:5173
+```
+
+Drop your chapter's HTML in (or paste it), skill checks get auto-colored, click any line in the preview to touch up its skill/outcome by hand, then copy the result back out.
+
+### Format a chapter from the CLI
+
+Transforms a raw HTML chapter file and writes a `.formatted.html` alongside it, wrapping skill-check lines in the correct `de-convo` / `de-skill` / `de-check` spans. Same parser the web app uses under the hood.
+
+```bash
+npm run format -- chapters/ch2.html
+# Writes chapters/ch2.formatted.html
+```
+
+### Run tests
+
+```bash
+npm test
+```
+
+### Build / deploy to GitHub Pages
+
+Builds the web app into `build/` and publishes it.
+
+```bash
+npm run build
+npm run deploy
+```
+
+---
+
 ## Read it on AO3
 
-**[Read *Unprofessional Conduct in the 41st* on AO3 →](https://archiveofourown.org/works/84782906/chapters/229473821)**
+**[Read *Unprofessional Conduct in the 41st* on AO3](https://archiveofourown.org/works/84782906/chapters/229473821)**
 
 ---
 
@@ -33,5 +82,3 @@ I make AO3 skins, stream on Twitch, and post fandom content across socials. Find
 All rights reserved. © NiniNeen.
 
 This is my original fanwork. The text of these chapters is **not** licensed for reuse, redistribution, adaptation, or republication anywhere, in whole or in part. Please do not copy, repost, or scrape this work. Not affiliated with ZA/UM.
-
----
