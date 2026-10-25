@@ -102,6 +102,54 @@ describe("transformLine — pass-through", () => {
 });
 
 // ---------------------------------------------------------------------------
+// transformLine — Kim's bench
+// ---------------------------------------------------------------------------
+
+describe("transformLine — Kim's bench", () => {
+  it("transforms each voice with its class", () => {
+    expect(transformLine('<p><strong>THE PARTNER</strong> [Entered] — <em>He is owed the reason anyway.</em></p>'))
+      .toBe('<p class="de-bench"><span class="de-voice partner">THE PARTNER</span> <span class="de-ruling">[Entered]</span> — <em>He is owed the reason anyway.</em></p>');
+    expect(transformLine('<p><strong>THE LIEUTENANT</strong> [Overruled] — <em>We do not open files we cannot close.</em></p>'))
+      .toContain('de-voice lieutenant');
+    expect(transformLine('<p><strong>THE BOY</strong> [Standing order] — <em>Be easy to keep.</em></p>'))
+      .toContain('de-voice boy');
+  });
+
+  it("wraps multiword rulings in de-ruling without any check class", () => {
+    const out = transformLine('<p><strong>THE BOY</strong> [Standing order] — <em>Be easy to keep.</em></p>');
+    expect(out).toContain('<span class="de-ruling">[Standing order]</span>');
+    expect(out).not.toContain('de-check');
+  });
+
+  it("accepts the ruling bracket inside the bold label", () => {
+    const out = transformLine('<p><strong>THE PARTNER [Entered]</strong> — <em>Reason.</em></p>');
+    expect(out).toBe('<p class="de-bench"><span class="de-voice partner">THE PARTNER</span> <span class="de-ruling">[Entered]</span> — <em>Reason.</em></p>');
+  });
+
+  it("trims stray space inside the ruling bracket", () => {
+    expect(transformLine('<p><strong>THE LIEUTENANT</strong> [ Overruled ] — <em>No.</em></p>'))
+      .toContain('<span class="de-ruling">[Overruled]</span>');
+  });
+
+  it("handles a bench stub with no body", () => {
+    const out = transformLine('<p><strong>THE BOY</strong> [Struck]</p>');
+    expect(out).toContain('class="de-bench"');
+    expect(out).toContain('<span class="de-ruling">[Struck]</span>');
+    expect(out).not.toContain('de-check');
+  });
+
+  it("leaves prose about the Lieutenant untouched", () => {
+    const line = "<p>From the Lieutenant's chair, nothing.</p>";
+    expect(transformLine(line)).toBe(line);
+  });
+
+  it("leaves bold bench-looking prose without a ruling bracket untouched", () => {
+    const line = "<p><strong>THE PARTNER</strong> — dialogue without a ruling.</p>";
+    expect(transformLine(line)).toBe(line);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // transformLine — skill checks
 // ---------------------------------------------------------------------------
 

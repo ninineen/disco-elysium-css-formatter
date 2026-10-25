@@ -1,8 +1,9 @@
-﻿import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import type { HtmlEditorHandle } from "../../components/HtmlEditor";
 import {
   applyOutcome,
   applySkill,
+  applyVoice,
   clearFormatting,
   parseBlock,
   type Outcome,
@@ -193,6 +194,7 @@ export function useFormatter() {
     clearActiveLine: () => updateActiveLine(clearFormatting),
     setActiveSkill: (skill: string) => updateActiveLine((line) => applySkill(line, skill)),
     setActiveOutcome: (outcome: Outcome) => updateActiveLine((line) => applyOutcome(line, outcome)),
+    setActiveVoice: (voice: string) => updateActiveLine((line) => applyVoice(line, voice)),
     handlePreviewClick,
     handleCaretLine,
     handleEditorChange,

@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "disco-elysium-css-formatter",
   "version": "1.0.0",
   "description": "Browser wizard + CLI that marks up Disco Elysium-style skill checks with the `ao3-adaptive-disco-elysium-workskin` CSS classes, for AO3 fic authors.",

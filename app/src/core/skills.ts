@@ -1,4 +1,4 @@
-﻿const ESPRIT_DE_CORPS = "ESPRIT DE CORPS";
+const ESPRIT_DE_CORPS = "ESPRIT DE CORPS";
 const HALF_LIGHT = "HALF-LIGHT";
 const HAND_EYE_COORDINATION = "HAND/EYE COORDINATION";
 
@@ -47,4 +47,21 @@ const SKILL_ALIASES: Record<string, Skill["name"]> = {
 export function findSkill(name: string): Skill | undefined {
   const canonical = SKILL_ALIASES[name] ?? name;
   return SKILLS.find((skill) => skill.name === canonical);
+}
+
+/**
+ * Kim's ranked judicial bench — rulings, not skill checks.
+ * Eyes/Dominic is an empty seat: deliberately no fourth voice here.
+ */
+export const BENCH_VOICES = [
+  { name: "THE LIEUTENANT", className: "lieutenant", color: "#B45A26" },
+  { name: "THE PARTNER", className: "partner", color: "#C9973B" },
+  { name: "THE BOY", className: "boy", color: "#8093C4" },
+] as const;
+
+export type BenchVoice = (typeof BENCH_VOICES)[number];
+export type BenchVoiceClass = BenchVoice["className"];
+
+export function findBenchVoice(name: string): BenchVoice | undefined {
+  return BENCH_VOICES.find((voice) => voice.name === name);
 }

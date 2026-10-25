@@ -1,4 +1,4 @@
-﻿import { SKILLS } from "../core/skills";
+import { SKILLS, BENCH_VOICES } from "../core/skills";
 import type { BlockInfo, Outcome } from "../core/blockEdit";
 
 export interface BlockMenuProps {
@@ -7,6 +7,7 @@ export interface BlockMenuProps {
   info: BlockInfo;
   onPickSkill: (name: string) => void;
   onPickOutcome: (outcome: Outcome) => void;
+  onPickVoice: (name: string) => void;
   onClear: () => void;
   onClose: () => void;
 }
@@ -17,39 +18,64 @@ export default function BlockMenu({
   info,
   onPickSkill,
   onPickOutcome,
+  onPickVoice,
   onClear,
   onClose,
 }: BlockMenuProps) {
-  const hasFormatting = info.skillCls !== null || info.outcome !== null;
+  const hasFormatting = info.skillCls !== null || info.outcome !== null || info.voiceCls !== null;
   const unavailableOutcomeMessage = "No [check] bracket on this line";
 
   return (
     <>
       <div className="dropdown-backdrop" onClick={onClose} />
       <div className="block-menu" style={{ left: x, top: y }}>
-        <div className="block-menu-section-label">Check result</div>
-        <div className="block-menu-outcomes">
-          <OutcomeButton outcome="success" currentOutcome={info.outcome} disabled={!info.hasBracket} title={unavailableOutcomeMessage} onPick={onPickOutcome} />
-          <OutcomeButton outcome="failure" currentOutcome={info.outcome} disabled={!info.hasBracket} title={unavailableOutcomeMessage} onPick={onPickOutcome} />
-        </div>
-        {!info.hasBracket && <div className="block-menu-hint">{unavailableOutcomeMessage}</div>}
+        {info.isBench ? (
+          <>
+            <div className="block-menu-section-label">Bench voice</div>
+            <div className="block-menu-skills">
+              {BENCH_VOICES.map((voice) => {
+                const isCurrent = voice.className === info.voiceCls;
+                return (
+                  <button
+                    key={voice.name}
+                    className={isCurrent ? "skill-dropdown-item is-current" : "skill-dropdown-item"}
+                    style={{ color: voice.color }}
+                    onClick={() => onPickVoice(voice.name)}
+                  >
+                    {voice.name}{isCurrent && <span className="skill-current-mark"> {"\u2713"}</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="block-menu-hint">Rulings are not skill checks — edit the bracket text in the HTML pane.</div>
+          </>
+        ) : (
+          <>
+            <div className="block-menu-section-label">Check result</div>
+            <div className="block-menu-outcomes">
+              <OutcomeButton outcome="success" currentOutcome={info.outcome} disabled={!info.hasBracket} title={unavailableOutcomeMessage} onPick={onPickOutcome} />
+              <OutcomeButton outcome="failure" currentOutcome={info.outcome} disabled={!info.hasBracket} title={unavailableOutcomeMessage} onPick={onPickOutcome} />
+            </div>
+            {!info.hasBracket && <div className="block-menu-hint">{unavailableOutcomeMessage}</div>}
 
-        <div className="block-menu-section-label">Skill</div>
-        <div className="block-menu-skills">
-          {SKILLS.map((skill) => {
-            const isCurrent = skill.className === info.skillCls;
-            return (
-              <button
-                key={skill.name}
-                className={isCurrent ? "skill-dropdown-item is-current" : "skill-dropdown-item"}
-                style={{ color: skill.color }}
-                onClick={() => onPickSkill(skill.name)}
-              >
-                {skill.name}{isCurrent && <span className="skill-current-mark"> {"\u2713"}</span>}
-              </button>
-            );
-          })}
-        </div>
+            <div className="block-menu-section-label">Skill</div>
+            <div className="block-menu-skills">
+              {SKILLS.map((skill) => {
+                const isCurrent = skill.className === info.skillCls;
+                return (
+                  <button
+                    key={skill.name}
+                    className={isCurrent ? "skill-dropdown-item is-current" : "skill-dropdown-item"}
+                    style={{ color: skill.color }}
+                    onClick={() => onPickSkill(skill.name)}
+                  >
+                    {skill.name}{isCurrent && <span className="skill-current-mark"> {"\u2713"}</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         {hasFormatting && <button className="block-menu-clear" onClick={onClear}>Remove formatting</button>}
       </div>

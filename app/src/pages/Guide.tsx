@@ -28,6 +28,21 @@ export default function Guide() {
         <li>The whole skill check must be on a single line, as one paragraph.</li>
       </ul>
 
+      <h3>Kim's bench</h3>
+      <p>
+        The formatter also recognizes Kim-style judicial bench lines — a
+        different internal system that <em>rules on</em> the character rather
+        than rolling skill checks:
+      </p>
+      <pre className="guide-code">
+        {"<p><strong>THE PARTNER</strong> [Entered] — body text</p>"}
+      </pre>
+      <ul className="guide-list">
+        <li>The voice must be <code>THE LIEUTENANT</code>, <code>THE PARTNER</code>, or <code>THE BOY</code>, wrapped in <code>&lt;strong&gt;</code>. The ruling bracket may also sit inside the bold with the voice name.</li>
+        <li>The bracket text is free-form — <code>Sustained</code>, <code>Overruled</code>, <code>Standing order</code>, <code>Struck</code>, anything. Rulings are <em>not</em> checks: no dice, no difficulty tiers, no Success/Failure colours.</li>
+        <li>Output uses <code>de-bench</code> / <code>de-voice</code> / <code>de-ruling</code> classes. Clicking a bench line in the preview offers a voice picker instead of skills; change the ruling text itself in the HTML pane.</li>
+      </ul>
+
       <h3>Worked example</h3>
       <p>Input:</p>
       <pre className="guide-code">{EXAMPLE_INPUT}</pre>

@@ -158,6 +158,56 @@
     color: #D32F2F;
 }
 
+/* --- KIM'S BENCH ---
+   Kim's ranked judicial bench: rulings, not skill checks.
+   No dice, no difficulty tiers, no success/failure colours. */
+#workskin .de-bench {
+    line-height: 1.6;
+    margin-bottom: 1.5em;
+    padding-left: 1.5em;
+    text-indent: -1.5em;
+}
+
+/* Bench voices — bold and uppercase like skill labels, coloured per voice */
+#workskin .de-voice {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* THE LIEUTENANT — restrained burnt copper: Kim's bomber, made official */
+#workskin .de-voice.lieutenant {
+    color: #B45A26;
+}
+
+/* THE PARTNER — warm amber */
+#workskin .de-voice.partner {
+    color: #C9973B;
+}
+
+/* THE BOY — muted forget-me-not blue */
+#workskin .de-voice.boy {
+    color: #8093C4;
+}
+
+/* Ruling brackets — upright and voice-coloured, never italic like Harry's checks.
+   The bracket text is free-form: Sustained, Overruled, Standing order, Struck... */
+#workskin .de-ruling {
+    color: #6B7280;
+    letter-spacing: 0.04em;
+}
+
+#workskin .de-voice.lieutenant + .de-ruling {
+    color: #B45A26;
+}
+
+#workskin .de-voice.partner + .de-ruling {
+    color: #C9973B;
+}
+
+#workskin .de-voice.boy + .de-ruling {
+    color: #8093C4;
+}
+
 /* --- Player Choices --- */
 #workskin ol.de-choices {
     list-style-type: decimal;

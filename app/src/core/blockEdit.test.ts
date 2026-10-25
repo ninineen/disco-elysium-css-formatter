@@ -1,12 +1,15 @@
 import {
   applyOutcome,
   applySkill,
+  applyVoice,
   clearFormatting,
   parseBlock,
 } from "./blockEdit";
 
 const FORMATTED =
   '<p class="de-convo"><span class="de-skill logic">LOGIC </span> <span class="de-check success">[Easy: success]</span> — <em>It is a nervous tic.</em></p>';
+const BENCH =
+  '<p class="de-bench"><span class="de-voice lieutenant">THE LIEUTENANT</span> <span class="de-ruling">[Overruled]</span> — <em>We do not open files we cannot close.</em></p>';
 
 describe("parseBlock", () => {
   it("reads skill, outcome and bracket from a formatted line", () => {
@@ -14,6 +17,8 @@ describe("parseBlock", () => {
       skillCls: "logic",
       outcome: "success",
       hasBracket: true,
+      voiceCls: null,
+      isBench: false,
     });
   });
 
@@ -22,6 +27,18 @@ describe("parseBlock", () => {
       skillCls: null,
       outcome: null,
       hasBracket: false,
+      voiceCls: null,
+      isBench: false,
+    });
+  });
+
+  it("reads the voice and flags a bench line", () => {
+    expect(parseBlock(BENCH)).toEqual({
+      skillCls: null,
+      outcome: null,
+      hasBracket: true,
+      voiceCls: "lieutenant",
+      isBench: true,
     });
   });
 });
@@ -88,7 +105,47 @@ describe("applyOutcome", () => {
   });
 });
 
+describe("applyVoice", () => {
+  it("replaces both the class and the label text of an existing voice span", () => {
+    const out = applyVoice(BENCH, "THE BOY");
+    expect(out).toContain('<span class="de-voice boy">THE BOY</span>');
+    expect(out).toContain('class="de-bench"');
+    expect(out).not.toContain("THE LIEUTENANT");
+    expect(out).toContain("[Overruled]");
+  });
+
+  it("converts a <strong> bench label into a voice span", () => {
+    const out = applyVoice("<p><strong>THE PARTNER</strong> [Entered] — body</p>", "THE PARTNER");
+    expect(out).toBe(
+      '<p class="de-bench"><span class="de-voice partner">THE PARTNER</span> [Entered] — body</p>'
+    );
+  });
+
+  it("converts a skill line into a bench line, keeping the bracket as a ruling", () => {
+    const out = applyVoice(FORMATTED, "THE PARTNER");
+    expect(out).toContain('class="de-bench"');
+    expect(out).toContain('<span class="de-voice partner">THE PARTNER </span>');
+    expect(out).toContain('<span class="de-ruling">[Easy: success]</span>');
+    expect(out).not.toContain("de-check");
+    expect(out).not.toContain("de-convo");
+  });
+});
+
+describe("clearFormatting — bench", () => {
+  it("unwraps voice and ruling spans and drops de-bench", () => {
+    expect(clearFormatting(BENCH)).toBe(
+      "<p>THE LIEUTENANT [Overruled] — <em>We do not open files we cannot close.</em></p>"
+    );
+  });
+
+  it("round-trips with applyVoice on a plain line", () => {
+    const plain = "<p>THE PARTNER [Entered] — body</p>";
+    expect(clearFormatting(applyVoice(plain, "THE PARTNER"))).toBe(plain);
+  });
+});
+
 describe("clearFormatting", () => {
+
   it("unwraps spans and drops de-convo", () => {
     expect(clearFormatting(FORMATTED)).toBe(
       "<p>LOGIC  [Easy: success] — <em>It is a nervous tic.</em></p>"

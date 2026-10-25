@@ -1,4 +1,4 @@
-﻿import BlockMenu from "../components/BlockMenu";
+import BlockMenu from "../components/BlockMenu";
 import type { Outcome } from "../core/blockEdit";
 import FormatterLanding from "../features/formatter/FormatterLanding";
 import FormatterWorkspace from "../features/formatter/FormatterWorkspace";
@@ -52,6 +52,7 @@ export default function Formatter({ onOpenGuide }: FormatterProps) {
           info={formatter.menuInfo}
           onPickSkill={formatter.setActiveSkill}
           onPickOutcome={(outcome: Outcome) => formatter.setActiveOutcome(outcome)}
+          onPickVoice={formatter.setActiveVoice}
           onClear={formatter.clearActiveLine}
           onClose={formatter.closeMenu}
         />
